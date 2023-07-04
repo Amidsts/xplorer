@@ -51,7 +51,7 @@ const postSchema = new Schema({
 },
 {timestamps: true})
 
-const post = model<IPost>("", postSchema)
+const post = model<IPost>("post", postSchema)
 
 
 export default post

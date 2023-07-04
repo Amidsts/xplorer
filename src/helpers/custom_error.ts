@@ -1,31 +1,29 @@
 class BaseError extends Error {
     protected success! :boolean
-    protected errorName!: string
     public message!: string
-    protected statusCode!: number  
+    public statusCode!: number  
     protected data!: object 
 }
 
-export class clientError extends BaseError {
+export class catchError extends BaseError {
     constructor ( errMessage: string, statuscode: number) {
         super()
 
         this.success = false,
-        this.errorName = "client error",
         this.message = errMessage,
         this.statusCode = statuscode,
         this.data = {}
     }
 }
 
-export class serverError extends BaseError {
-    constructor ( errMessage: string, statuscode: number) {
-        super()
+// export class serverError extends BaseError {
+//     constructor ( errMessage: string, statuscode: number) {
+//         super()
         
-        this.success = false,
-        this.errorName = "server error",
-        this.message = errMessage,
-        this.statusCode = statuscode,
-        this.data = {}
-    }
-}
+//         this.success = false,
+//         this.errorName = "server error",
+//         this.message = errMessage,
+//         this.statusCode = statuscode,
+//         this.data = {}
+//     }
+// }

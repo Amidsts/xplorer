@@ -4,8 +4,10 @@ import morgan from "morgan"
 import helmet from "helmet"
 
 
-import userApis from "../routes/userRoutes"
+import userApis from "../routes/authRoutes"
 import postApis from "../routes/postRoutes"
+
+
 
 const app = express()
 

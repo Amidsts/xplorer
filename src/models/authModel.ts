@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose"
 
-import { Role } from "../Enums/userEnum"
+import { Role } from "../Enums/authEnum"
 
 interface IUser {
     userName: string

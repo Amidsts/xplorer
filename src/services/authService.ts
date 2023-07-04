@@ -1,13 +1,10 @@
 import {
     createUser
-} from "../models/repository/userRepo";
+} from "../models/repository/authRepo";
 import helpers from "../helpers/general"
 import {
-    clientError, 
-    serverError
+    catchError, 
 } from "../helpers/custom_error";
-import user from "../models/userModel";
-
 
 
 const {
@@ -15,15 +12,16 @@ const {
     responseHandler
 } = helpers
 
-export async function createUserService (payload: {[key: string]: any}) {
+export async function createUserService (payload: {[key: string]: any}):Promise<any> {
    return await asyncWrapper( async () => {
 
         const newuser = await createUser(payload)
 
         if ( newuser instanceof Error) { 
 
-            throw new clientError(newuser.message, 400)
+            throw new catchError(newuser.message, 400)
         }
+
         return responseHandler("data saved successfully" ,newuser)
    })
 }

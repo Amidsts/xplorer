@@ -5,7 +5,7 @@ import {
 
 const router = Router()
 
-router.post("/createPost", createPostController)
-router.get("/getPost", getPostController)
+router.post("/create_post", createPostController)
+router.get("/get_post", getPostController)
 
 export default router

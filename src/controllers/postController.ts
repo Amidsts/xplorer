@@ -4,28 +4,19 @@ import {
     createPostService, 
     getPostService
 } from "../services/postService"
-import helpers from "../helpers/general";
+
+
 
 export async function createPostController(req: Request, res: Response, next: NextFunction) {
-    try {
-        const response = await createPostService(req.body)
 
-        return res.json(response)
+    const response = await createPostService(req.body)
 
-    } catch (error) {
-        
-        res.send(error)
-    }
+    return res.status(response.statusCode).json(response)
 }
 
 export async function getPostController(req: Request, res: Response, next: NextFunction) {
-    try {
-        const response = await getPostService(req.params.postId)
 
-        return res.json(response)
+    const response = await getPostService(req.params.postId)
 
-    } catch (error) {
-        
-        res.send(error)
-    }
+    return res.status(response.statusCode).json(response)
 }

@@ -1,4 +1,5 @@
 import dotenv from "dotenv"
+import { catchError } from "./custom_error"
 
 dotenv.config()
 
@@ -6,10 +7,13 @@ class ApiResponder {
 
     async asyncWrapper (callback: () => void) {
         try {
-
-            return callback()
-        } catch (error) {
-            return error
+            const c = await callback()
+          
+            return c
+        } catch (error: any) {
+            // console.log("err message", error.message);
+            return new catchError(error.message, 500)
+            // return error
         }
     }       
 
