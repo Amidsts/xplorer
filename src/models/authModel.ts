@@ -1,14 +1,14 @@
 import {Schema, model} from "mongoose"
 
-import { Role } from "../Enums/authEnum"
+import { Role } from "../helpers/enum"
 
-interface IUser {
+export interface IUser {
     userName: string
     password: string
     email: string
     followers?: string[]
     following?: Array<string>
-    pic: string
+    pic?: string
     role: Role
     posts?: Array<string>
 }
@@ -41,8 +41,8 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        required: true,
-        enum: Role
+        enum: Role,
+        default: "Blogger"
     },
     posts: [{
         type: Schema.Types.ObjectId,

@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose"
 
-import { postcategory } from "../Enums/postsEnum"
+import { postcategory } from "../helpers/enum"
 
 interface IPost {
     title: string
@@ -12,7 +12,10 @@ interface IPost {
         imageUrl: string
         imageId: string
     }
-    comments?: Array<string>
+    comments?: {
+        commentator: string,
+        comment: string
+    }[]
     postedBy: string
 }
 
@@ -26,10 +29,10 @@ const postSchema = new Schema({
         type: String,
         required: true
     },
-    likes: {
+    likes: [{
         type: Schema.Types.ObjectId,
         ref: "user"
-    },
+    }],
     category: {
         type: String,
         required: true,
@@ -39,10 +42,16 @@ const postSchema = new Schema({
         imageUrl: String,
         imageId: String
     },
-    comments: {
-        type: Schema.Types.ObjectId,
-        ref: "user"
-    },
+    comments: [{
+        commentators: {
+            type: Schema.Types.ObjectId,
+            ref: "user"
+        },
+        comment: {
+            type: String,
+            required: true
+        }
+    }],
     postedBy:{
         type: Schema.Types.ObjectId,
         ref: "user",

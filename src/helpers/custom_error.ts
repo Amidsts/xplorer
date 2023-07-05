@@ -6,12 +6,12 @@ class BaseError extends Error {
 }
 
 export class catchError extends BaseError {
-    constructor ( errMessage: string, statuscode: number) {
+    constructor ( errMessage: string, statuscode?: number) {
         super()
 
         this.success = false,
         this.message = errMessage,
-        this.statusCode = statuscode,
+        this.statusCode = statuscode as number,
         this.data = {}
     }
 }

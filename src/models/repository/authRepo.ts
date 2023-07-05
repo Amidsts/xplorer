@@ -8,7 +8,7 @@ const {asyncWrapper} = helpers
 
 
 //createUser
-export async function createUser(payload: {[key: string]: any}) {
+export async function createUserRepository(payload: {[key: string]: any}): Promise<any> {
 
     return await asyncWrapper( async() => {
         
@@ -19,28 +19,38 @@ export async function createUser(payload: {[key: string]: any}) {
 }
 
 //get user
-export async function getUser(userId: string) {
+export async function getUserRepository(payload: {[key: string]: any}): Promise<any> {
 
     return await asyncWrapper( async() => {
         
-        const getUser = await user.findById(userId)
+        const getUser = await user.findOne(payload)
         return getUser
     })
 }
 
-export async function getUsers(page: number, perPage: number) {
+export async function getUsersRepository(page: number, perPage: number): Promise<any> {
 
     return await asyncWrapper( async() => {
         
         const getUsers = await user.find()
 
-        return getUser
+        return getUsers
+    })
+}
+
+export async function updateUserDataRepository(userId: string, payload: {[key:string]: any}): Promise<any> {
+
+    return await asyncWrapper( async() => {
+        
+        const updateUserData = await user.findByIdAndUpdate(userId, payload)
+
+        return updateUserData
     })
 }
 
 //update profile picture
-export async function uploadPics () {
-    
+export async function uploadPicsRepository (): Promise<any> {
+
 } 
 
 

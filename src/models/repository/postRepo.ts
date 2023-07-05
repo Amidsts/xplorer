@@ -6,7 +6,7 @@ const {asyncWrapper} = helpers
 
 
 //create post
-export async function createPost(payload: {[key: string]: any}) {
+export async function createPostRepository(payload: {[key: string]: any}): Promise<any> {
     return await asyncWrapper( async () => {
         
         const newPost = await new post(payload).save()
@@ -15,27 +15,54 @@ export async function createPost(payload: {[key: string]: any}) {
 }
 
 //get all posts (only admin and network)
+export async function getPostsRepository(offset: number, nPerPage: number): Promise<any> {
+    return await asyncWrapper( async () => {
+        
+        const totalPosts = await post.count()
+
+        if (offset >= totalPosts) {
+            offset = totalPosts/2
+        }
+
+        const posts = await post.find()
+        .skip(offset)
+        .limit(nPerPage)
+        
+        return posts
+   })
+}
 
 // get my post
-export async function getPost(postId: string) {
+export async function getPostRepository(postId: string): Promise<any> {
     return await asyncWrapper( async () => {
      
-        const postExist = await post.findById(postId)
+        const postExist = await post.findById(postId).populate("postedBy")
 
-        if (!postExist) throw new catchError("post does not exists", 404)
-        
         return postExist
     })
 }
 
-//get posts by category 
-
-//get post
-
 //delete post
 
-//like post
+//update post
+export async function updatePostRepository(postId: string, payload: {[key:string]: any}): Promise<any> {
+    return await asyncWrapper( async () => {
+     
+        const postExist = await post.findByIdAndUpdate(
+            postId,
+            payload
+        )
+
+        return postExist
+    })
+}
 
 //unlike post
 
 //comment on a post
+
+//search posts by category 
+
+//get post
+
+
