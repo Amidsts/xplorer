@@ -7,8 +7,9 @@ import { JwtPayload, decode} from "jsonwebtoken";
 
 import { catchError } from "../helpers/custom_error";
 import user from "../models/authModel";
-import {IRequest} from "../helpers/enum"
 import helper from "../helpers/general";
+import { getPostRepository } from "../models/repository/postRepo"
+import { getUserRepository } from "../models/repository/authRepo";
 
 
 
@@ -16,7 +17,7 @@ const {verifyToken} = helper
 
 export function authUser(roles: Array<string>) {
   return async (
-        req: IRequest, 
+        req: Request, 
         res: Response, 
         next: NextFunction
     ) => {
@@ -49,3 +50,28 @@ export function authUser(roles: Array<string>) {
 
     }
 }
+
+//allow people the logged in user is following to access the endpoint
+export async function authConnections () {
+    return async (req: Request, res: Response, next: NextFunction) => {
+
+        const post = await getPostRepository(req.params.postId)
+        
+        if ( post === null ) {throw new catchError("post not found")} 
+
+        res.locals.post = post
+
+        const postedBy = post.postedBy
+        const postOwner = await getUserRepository({_id: postedBy})
+console.log(postOwner);
+
+        const {user} = res.locals
+
+        if (post.postedBy !== user._id || !user.followers.includes(postOwner) || !user.followings.includes(postOwner)) { throw new catchError("you are not authourised!") }
+
+        next()
+    }
+}
+
+//get my followers posts
+//

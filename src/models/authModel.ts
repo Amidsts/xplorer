@@ -7,7 +7,7 @@ export interface IUser {
     password: string
     email: string
     followers?: string[]
-    following?: Array<string>
+    followings?: Array<string>
     pic?: string
     role: Role
     posts?: Array<string>

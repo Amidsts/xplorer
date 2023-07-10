@@ -13,6 +13,7 @@ export async function createUserRepository(payload: {[key: string]: any}): Promi
     return await asyncWrapper( async() => {
         
         const newUser = await new user(payload).save()
+        console.log(newUser);
         
         return newUser
     })
@@ -23,7 +24,7 @@ export async function getUserRepository(payload: {[key: string]: any}): Promise<
 
     return await asyncWrapper( async() => {
         
-        const getUser = await user.findOne(payload)
+        const getUser = await user.findOne(payload).select("-password")
         return getUser
     })
 }
@@ -32,17 +33,17 @@ export async function getUsersRepository(page: number, perPage: number): Promise
 
     return await asyncWrapper( async() => {
         
-        const getUsers = await user.find()
+        const getUsers = await user.find().select("-password")
 
         return getUsers
     })
 }
 
-export async function updateUserDataRepository(userId: string, payload: {[key:string]: any}): Promise<any> {
+export async function updateUserDataRepository(filter: {[key: string]: any}, payload: {[key:string]: any}): Promise<any> {
 
     return await asyncWrapper( async() => {
-        
-        const updateUserData = await user.findByIdAndUpdate(userId, payload)
+
+        const updateUserData = await user.findOneAndUpdate(filter, payload)
 
         return updateUserData
     })
@@ -53,6 +54,19 @@ export async function uploadPicsRepository (): Promise<any> {
 
 } 
 
+//follow user
+// export async function followUserDataRepository(userId: string, payload: {[key:string]: any}): Promise<any> {
+
+//     return await asyncWrapper( async() => {
+        
+//         const updateUserData = await user.findByIdAndUpdate(userId, payload)
+
+//         return updateUserData
+//     })
+// }
+
+
+//unfollow user
 
 //getUsers
 
@@ -62,9 +76,7 @@ export async function uploadPicsRepository (): Promise<any> {
 
 //getFollowing
 
-//follow user
 
-//unfollow user
 
 //
 

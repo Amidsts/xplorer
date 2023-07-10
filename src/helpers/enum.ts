@@ -1,10 +1,5 @@
-import { Request } from "express";
 import { IUser } from "../models/authModel";
 
-
-export interface IRequest extends Request {
-    user?: IUser
-}
 
 
 export enum Role {

@@ -11,7 +11,7 @@ dotenv.config()
 
 class ApiResponder {
 
-    async asyncWrapper (callback: () => void) {
+    async asyncWrapper (callback: () => void, extra?: any) {
         try {
              const result = await callback()
 
@@ -19,6 +19,8 @@ class ApiResponder {
         } catch (error: any) {
     
             return new catchError(error.message, 500)
+        } finally {
+            return 
         }
     }       
 

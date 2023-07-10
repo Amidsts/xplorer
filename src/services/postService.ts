@@ -6,7 +6,7 @@ import {
 } from "../models/repository/postRepo";
 import helpers from "../helpers/general"
 import { catchError } from "../helpers/custom_error";
-import { updateUserDataRepository } from "../models/repository/authRepo";
+import { getUserRepository, updateUserDataRepository } from "../models/repository/authRepo";
 import { 
     createPostValidator
 } from "../inputValidators.ts/post.validator";
@@ -18,7 +18,7 @@ const {
 } = helpers
 
 
-export async function createPostService(payload: {[key: string]: any}): Promise<any> {
+export async function createPostService(userId: string, payload: {[key: string]: any}): Promise<any> {
     return await asyncWrapper( async () => {
 
         const {
@@ -27,18 +27,16 @@ export async function createPostService(payload: {[key: string]: any}): Promise<
             body,
             category
         }= createPostValidator(payload)
-        
+
         const newPost = await createPostRepository({
             title,
             subtitle,
             body,
-            category
+            category,
+            postedBy: userId
         })
 
-        if ( newPost instanceof Error) { 
-
-            throw new catchError(newPost.message)
-        }
+        if ( newPost instanceof Error) { throw new catchError(newPost.message) }
 
         await updateUserDataRepository(newPost.postedBy, {
             "$push": {
@@ -50,24 +48,37 @@ export async function createPostService(payload: {[key: string]: any}): Promise<
     })
 }
 
-export async function getPostService(postId: string): Promise<any> {
+//only post owner and post owner follwers can access
+export async function getPostService(postId: string, userId: string): Promise<any> {
     return await asyncWrapper( async () => {
+
         const post = await getPostRepository(postId)
 
-        if ( post === null ) {throw new catchError("post not found")}
+        if ( post === null ) {throw new catchError("post not found")} 
 
         return responseHandler("post has been retrieved", post)
     })
 }
 
-export async function getPostsService(skip: number, nPerPage: number): Promise<any> {
+//not completed
+export async function getPostsService(userId: string, skip: number, nPerPage: number): Promise<any> {
     return await asyncWrapper( async () => {
+        
+        let usersId = []
+        const user = await getUserRepository({_id: userId})
 
-        const posts = await getPostsRepository(skip, nPerPage)
+        const followersId = user.followers
+        const followingsId = user.followings
 
-        if ( posts === null ) {throw new catchError("post not found")}
+        usersId.push(userId, ...followersId, ...followingsId)
 
-        return responseHandler("post has been retrieved", posts)
+        usersId
+        
+        // const posts = await getPostsRepository(skip, nPerPage)
+
+        // if ( posts === null ) {throw new catchError("post not found")}
+
+        // return responseHandler("post has been retrieved", posts)
     })
 }
 
@@ -83,6 +94,7 @@ export async function likePostService(postId: string, userId: string): Promise<a
     })
 }
 
+//posts by loggedIn user and loggedIn User's posts
 export async function unLikePostService(postId: string, userId: string): Promise<any> {
     return await asyncWrapper( async () => {
 
@@ -108,3 +120,6 @@ export async function PostCommentService(postId: string, payload: {[key: string]
         return likePost
     })
 }
+
+//delete a post
+//edit/update a post
