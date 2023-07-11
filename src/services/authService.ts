@@ -92,8 +92,8 @@ export async function logInUserService (payload: {[key: string]: any}):Promise<a
     })
 }
 
-//implement transaction
-export async function followUserService( followerId: string, followingId: string ): Promise<any> {
+//follow or unfollow a user
+export async function connectUsersService( followerId: string, followingId: string ): Promise<any> {
 console.log(followerId.toString());
 
     const session = await mongoose.startSession()
@@ -104,25 +104,51 @@ console.log(followerId.toString());
 
         if (userExist instanceof Error ){ throw new catchError(userExist.message)}
 
-        //update the folower data (i.e user with the followerId)
-        const followUser = await user.findOneAndUpdate(
-            {_id: followerId.toString()},
-            {"$push" : {
-                followings: userExist._id
-            }},
-            {session}
-        )
+        //check if the following has this follower
+        const isFollower = (userExist.followers).includes(followerId)
+        
+        //if isFollower unfollow the user then return
+        if (isFollower) {
 
-        //update the followee data (i.e user with the followingId)
-        const c= await user.findOneAndUpdate(
-            {_id: userExist._id},
-            {"$push" : {
-                followers: followerId
-            }},
-            {session}
-        )
+            const unFollowedUser = await user.findByIdAndUpdate(
+                {_id: userExist._id},
+                {"$pull" : {
+                    followers: followerId
+                }},
+                {session}
+            )
 
-        return responseHandler(`you are now following ${userExist.userName}`)
+            const unFollowUser = await user.findByIdAndUpdate(
+                {_id: followerId},
+                {"$pull" : {
+                    followings: userExist._id
+                }},
+                {session}
+            )
+    
+            return responseHandler(`you unfollow ${unFollowedUser!.userName}`)
+        } else {
+
+            //update the folower data (i.e user with the followerId)
+            const followUser = await user.findOneAndUpdate(
+                {_id: followerId.toString()},
+                {"$push" : {
+                    followings: userExist._id
+                }},
+                {session}
+            )
+
+            //update the followee data (i.e user with the followingId)
+            const c= await user.findOneAndUpdate(
+                {_id: userExist._id},
+                {"$push" : {
+                    followers: followerId
+                }},
+                {session}
+            )
+
+            return responseHandler(`you are now following ${userExist.userName}`)
+        }
     } catch (error: any) {
 
         await session.abortTransaction()
@@ -131,64 +157,22 @@ console.log(followerId.toString());
     } finally {
         session.endSession()
     }
-
-}
-
-export async function unFollowUserService( followerId: string, followingId: string ): Promise<any> {
-
-    const  session = await mongoose.startSession()
-    try {
-        const followingExists = await getUserRepository({_id: followingId})
-
-        if (followingExists instanceof Error ){ throw new catchError(followingExists.message)}
-
-        const unFollowUser = await user.findByIdAndUpdate(
-            {_id: followerId},
-            {"$pull" : {
-                followings: followingExists._id
-            }},
-            {session}
-        )
-        const unFollowedUser = await user.findByIdAndUpdate(
-            {_id: followingId},
-            {"$pull" : {
-                followers: followerId
-            }},
-            {session}
-        )
-
-        return responseHandler(`you unfollow ${unFollowedUser!.userName}`)
-
-    } catch (error: any) {
-
-        await session.abortTransaction()
-        return new catchError(error.message, 500)
-
-    } finally {
-        session.endSession()
-    }
-
 }
 
 //get all followers or followings
-export async function getConnectionsServices (userId: string, networkType: string): Promise<any> {
+export async function getConnectionsServices (authUser: any, networkType: string): Promise<any> {
     return asyncWrapper( async () => {
-        const user = await getUserRepository({_id: userId})
-
-        if (user instanceof Error) {
-            throw new catchError(user.message)
-        }
 
         let network 
 
         if (networkType === "followers") {
-            network = user.followers
+            network = authUser.followers
 
-            if (!network) { throw new catchError("you dont have any follwers") }
+            if (!network.length) { throw new catchError("you dont have any follwers") }
         }else if (networkType === "followings") {
-            network = user.followings
+            network = authUser.followings
 
-            if (!network) { throw new catchError("you dont have any follwings") }
+            if (!network.length) { throw new catchError("you dont have any follwings") }
         } else {
             throw new catchError("This network does not exist")
         }

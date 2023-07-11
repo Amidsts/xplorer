@@ -20,8 +20,7 @@ export function authUser(roles: Array<string>) {
         next: NextFunction
     ) => {
         try {
-    console.log("check");
-    
+
             const {authorisation} = req.headers
 
             if (!authorisation) {
@@ -36,8 +35,11 @@ export function authUser(roles: Array<string>) {
 
             const User = await user.findById(id)
     
-            if (!User) throw new catchError("This account is not found")
-            
+            if (User instanceof Error) {
+                throw new catchError(User.message)
+            }
+        
+            User!.password = ""
             res.locals.user = User
             
             if ( !roles.includes( res.locals.user.role as string)) throw new catchError("you are not authourized")
@@ -51,7 +53,7 @@ export function authUser(roles: Array<string>) {
 }
 
 //allow people the logged in user is following to access the endpoint
-export async function authConnections () {
+export function authConnections () {
     return async (req: Request, res: Response, next: NextFunction) => {
 
         const post = await getPostRepository(req.params.postId)

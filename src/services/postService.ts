@@ -84,6 +84,13 @@ export async function getPostsService(userId: string, skip: number, nPerPage: nu
 export async function likePostService(postId: string, userId: string): Promise<any> {
     return await asyncWrapper( async () => {
 
+        const Post = await getPostRepository(postId)
+
+        //unlike post if 
+        if (Post.likes.includes(userId)) {
+
+        }
+
         const likePost = await updatePostRepository(
             postId, 
             { "$push": {likes: userId}}

@@ -8,8 +8,10 @@ import { authConnections, authUser } from "../middlewares/authenticate";
 
 const router = Router()
 
-router.post("/create_post", authUser(["Blogger"]), createPostController)
-router.get("/get_post/:postId", authUser(["Blogger"]), authConnections, getPostController)
+router.post("/post/create_post", authUser(["Blogger"]), createPostController)
+router.get("/post/get_post/:postId", authUser(["Blogger"]), authConnections(), getPostController)
+
+router.put("/post/like_unlike")
 
 
 

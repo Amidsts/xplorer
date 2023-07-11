@@ -31,14 +31,14 @@ const userSchema = new Schema({
         imageId: String,
         imageUrl: String
     },
-    followers: {
+    followers: [{
         type: Schema.Types.ObjectId,
         ref: "user"
-    },
-    followings: {
+    }],
+    followings: [{
         type: Schema.Types.ObjectId,
         ref: "user"
-    },
+    }],
     role: {
         type: String,
         enum: Role,
