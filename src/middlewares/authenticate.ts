@@ -7,13 +7,11 @@ import { JwtPayload, decode} from "jsonwebtoken";
 
 import { catchError } from "../helpers/custom_error";
 import user from "../models/authModel";
-import helper from "../helpers/general";
+import {verifyToken} from "../helpers/general";
 import { getPostRepository } from "../models/repository/postRepo"
 import { getUserRepository } from "../models/repository/authRepo";
 
 
-
-const {verifyToken} = helper
 
 export function authUser(roles: Array<string>) {
   return async (
@@ -22,6 +20,7 @@ export function authUser(roles: Array<string>) {
         next: NextFunction
     ) => {
         try {
+    console.log("check");
     
             const {authorisation} = req.headers
 
@@ -44,10 +43,10 @@ export function authUser(roles: Array<string>) {
             if ( !roles.includes( res.locals.user.role as string)) throw new catchError("you are not authourized")
             
             return next()
-        } catch (error) {
-           res.send(error)
+        } catch (error: any) {
+            
+           res.send( new catchError(error.message))
         }
-
     }
 }
 

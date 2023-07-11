@@ -35,7 +35,7 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "user"
     },
-    following: {
+    followings: {
         type: Schema.Types.ObjectId,
         ref: "user"
     },

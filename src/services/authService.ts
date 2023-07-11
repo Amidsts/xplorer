@@ -6,7 +6,13 @@ import {
     getUserRepository,
     updateUserDataRepository
 } from "../models/repository/authRepo";
-import helpers from "../helpers/general"
+import {
+    asyncWrapper,
+    responseHandler,
+    generateToken,
+    hashPassword,
+    comparePassword
+} from "../helpers/general"
 import {
     catchError
 } from "../helpers/custom_error";
@@ -16,14 +22,6 @@ import {
 } from "../inputValidators.ts/auth.validator";
 import user from "../models/authModel";
 
-
-const {
-    asyncWrapper,
-    responseHandler,
-    generateToken,
-    hashPassword,
-    comparePassword
-} = helpers
 
 
 export async function createUserService (payload: {[key: string]: any}):Promise<any> {
@@ -41,20 +39,22 @@ console.log(password);
         if (userExists) {
             throw new catchError("This account already exists")
         }
-        const hashedPassword = hashPassword(password)
+        const hash = hashPassword(password)
 
         const newuser = await createUserRepository({
             userName,
-            password: hashedPassword,
+            password: hash,
             email,
             role: "Blogger"
         })
 
+        newuser.password = ""
+
         if ( newuser instanceof Error) { 
-console.log("check");
 
             throw new catchError(newuser.message)
         }
+
         return responseHandler("data saved successfully",newuser)
    })
 }
@@ -73,7 +73,7 @@ export async function logInUserService (payload: {[key: string]: any}):Promise<a
 
             throw new catchError(getUser.message)
         }
-
+        
         const isPasswrdSame = comparePassword(password, getUser.password)
 
         if (!isPasswrdSame) {
@@ -94,17 +94,19 @@ export async function logInUserService (payload: {[key: string]: any}):Promise<a
 
 //implement transaction
 export async function followUserService( followerId: string, followingId: string ): Promise<any> {
+console.log(followerId.toString());
 
     const session = await mongoose.startSession()
+
     try {
+        //check if following exists
         const userExist = await getUserRepository({_id: followingId})
-console.log(userExist);
 
         if (userExist instanceof Error ){ throw new catchError(userExist.message)}
 
-         //update the folower data (i.e user with the followerId)
+        //update the folower data (i.e user with the followerId)
         const followUser = await user.findOneAndUpdate(
-            {id: followerId},
+            {_id: followerId.toString()},
             {"$push" : {
                 followings: userExist._id
             }},
@@ -112,7 +114,7 @@ console.log(userExist);
         )
 
         //update the followee data (i.e user with the followingId)
-        await user.findOneAndUpdate(
+        const c= await user.findOneAndUpdate(
             {_id: userExist._id},
             {"$push" : {
                 followers: followerId

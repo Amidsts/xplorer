@@ -1,8 +1,6 @@
 import joi from "joi"
 
-import helper from "../helpers/general"
-
-const {validate} = helper
+import {validate} from "../helpers/general"
 
 
 export const createPostValidator = (payload: {[key: string]: any}) => {

@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-import helpers from "./general"
+import {env} from "./general"
 
 const {
     combine,
@@ -32,7 +32,7 @@ const logformat = printf(
 })
 
 
-if (helpers.env("NODE_ENV") === "production") {
+if (env("NODE_ENV") === "production") {
     logger.add(
         new transports.File({
             filename: "error.log"

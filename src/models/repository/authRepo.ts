@@ -1,10 +1,8 @@
 import { SaveOptions } from "mongoose";
 
 import user from "../authModel";
-import helpers from "../../helpers/general"
+import {asyncWrapper} from "../../helpers/general"
 import { catchError } from "../../helpers/custom_error";
-
-const {asyncWrapper} = helpers
 
 
 //createUser
@@ -13,18 +11,22 @@ export async function createUserRepository(payload: {[key: string]: any}): Promi
     return await asyncWrapper( async() => {
         
         const newUser = await new user(payload).save()
-        console.log(newUser);
         
         return newUser
     })
 }
 
 //get user
-export async function getUserRepository(payload: {[key: string]: any}): Promise<any> {
+export async function getUserRepository(payload: {[key: string]: any}, excludeField?: boolean): Promise<any> {
 
     return await asyncWrapper( async() => {
-        
-        const getUser = await user.findOne(payload).select("-password")
+
+        if (excludeField){
+            const getUser = await user.findOne(payload).select("-password")
+            return getUser
+        }
+
+        const getUser = await user.findOne(payload)
         return getUser
     })
 }

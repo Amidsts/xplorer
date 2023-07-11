@@ -1,6 +1,6 @@
 import {ConnectOptions, connect} from "mongoose"
 
-import helpers from "../helpers/general"
+import {env} from "../helpers/general"
 import logger from "../helpers/logger"
 
 
@@ -11,7 +11,7 @@ const options = {
 
 
 
-connect(helpers.env("dbUri"), options).then( (e) => {
+connect(env("dbUri"), options).then( (e) => {
     
     logger.info("connected to database successfully")
 

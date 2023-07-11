@@ -13,7 +13,6 @@ import {
 export async function createUserController(req: Request, res: Response, next: NextFunction) {
 
     const response = await createUserService(req.body)
-console.log(response);
 
     return res.status(response.statusCode).json(response)
 }

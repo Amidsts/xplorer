@@ -4,7 +4,10 @@ import {
     getPostsRepository,
     updatePostRepository
 } from "../models/repository/postRepo";
-import helpers from "../helpers/general"
+import {
+    asyncWrapper,
+    responseHandler
+} from "../helpers/general"
 import { catchError } from "../helpers/custom_error";
 import { getUserRepository, updateUserDataRepository } from "../models/repository/authRepo";
 import { 
@@ -12,10 +15,6 @@ import {
 } from "../inputValidators.ts/post.validator";
 
 
-const {
-    asyncWrapper,
-    responseHandler
-} = helpers
 
 
 export async function createPostService(userId: string, payload: {[key: string]: any}): Promise<any> {

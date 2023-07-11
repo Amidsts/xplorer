@@ -1,8 +1,7 @@
 import joi from "joi"
 
-import helper from "../helpers/general"
+import {validate} from "../helpers/general"
 
-const {validate} = helper
 
 
 export const createUserValidator = (payload: {[key: string]: any}) => {

@@ -1,8 +1,7 @@
 import post from  "../postModel"
-import helpers from "../../helpers/general"
+import {asyncWrapper} from "../../helpers/general"
 import { catchError } from "../../helpers/custom_error"
 
-const {asyncWrapper} = helpers
 
 
 //create post
