@@ -81,6 +81,7 @@ export async function getPostsService(userId: string, skip: number, nPerPage: nu
     })
 }
 
+//not completed
 export async function likePostService(postId: string, userId: string): Promise<any> {
     return await asyncWrapper( async () => {
 
