@@ -14,7 +14,7 @@ export async function createPostRepository(payload: {[key: string]: any}): Promi
 }
 
 //get all posts (only admin and network)
-export async function getPostsRepository(postOwner: string, offset: number, nPerPage: number): Promise<any> {
+export async function getPostsRepository(payload: string[],offset: number, nPerPage: number): Promise<any> {
     return await asyncWrapper( async () => {
         
         const totalPosts = await post.count()
@@ -23,7 +23,11 @@ export async function getPostsRepository(postOwner: string, offset: number, nPer
             offset = totalPosts/2
         }
 
-        const posts = await post.find({postedBy: postOwner})
+        const posts = await post.find({
+            postedBy: {
+                $in: payload
+            }
+        })
         .skip(offset)
         .limit(nPerPage)
         .sort("asc")

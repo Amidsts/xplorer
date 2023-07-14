@@ -3,7 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import {
     createPostService, 
     getPostService,
-    getPostsService
+    getPostsService,
+    reactToPostService
 } from "../services/postService"
 
 
@@ -18,18 +19,25 @@ export async function createPostController(req: Request, res: Response, next: Ne
 
 export async function getPostController(req: Request, res: Response, next: NextFunction) {
 
-    const {user, post} = res.locals
-    const response = await getPostService(user._id, post._id)
+    const {post} = res.locals
+    const response = await getPostService(post)
 
     return res.status(response.statusCode).json(response)
 }
 
-// export async function getPostsController(req: Request, res: Response, next: NextFunction) {
+export async function getPostsController(req: Request, res: Response, next: NextFunction) {
 
-//     const {offset, limit} = res.locals
-//     console.log({offset, limit});
+    const {offset, limit, user} = res.locals
     
-//     const response = await getPostsService(offset, limit)
+    const response = await getPostsService(user._id, offset, limit)
 
-//     return res.status(response.statusCode).json(response)
-// }
+    return res.status(response.statusCode).json(response)
+}
+
+export async function reactToPostController(req: Request, res: Response, next: NextFunction) {
+
+    const {post, user} = res.locals
+    const response = await reactToPostService(post, user._id)
+
+    return res.status(response.statusCode).json(response)
+}

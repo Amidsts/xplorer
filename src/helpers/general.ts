@@ -15,7 +15,7 @@ export async function asyncWrapper (callback: () => void, extra?: any) {
         return result
     } catch (error: any) {
 
-        return new catchError(error.message, 500)
+        return new catchError(error.message)
     }
 }
 

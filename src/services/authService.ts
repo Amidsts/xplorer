@@ -94,7 +94,6 @@ export async function logInUserService (payload: {[key: string]: any}):Promise<a
 
 //follow or unfollow a user
 export async function connectUsersService( followerId: string, followingId: string ): Promise<any> {
-console.log(followerId.toString());
 
     const session = await mongoose.startSession()
 

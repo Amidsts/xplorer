@@ -13,8 +13,7 @@ import { getUserRepository, updateUserDataRepository } from "../models/repositor
 import { 
     createPostValidator
 } from "../inputValidators.ts/post.validator";
-
-
+import post from "../models/postModel";
 
 
 export async function createPostService(userId: string, payload: {[key: string]: any}): Promise<any> {
@@ -48,84 +47,59 @@ export async function createPostService(userId: string, payload: {[key: string]:
 }
 
 //only post owner and post owner follwers can access
-export async function getPostService(postId: string, userId: string): Promise<any> {
+export async function getPostService(post: string): Promise<any> {
     return await asyncWrapper( async () => {
-
-        const post = await getPostRepository(postId)
-
-        if ( post === null ) {throw new catchError("post not found")} 
 
         return responseHandler("post has been retrieved", post)
     })
 }
 
-//not completed
 export async function getPostsService(userId: string, skip: number, nPerPage: number): Promise<any> {
     return await asyncWrapper( async () => {
         
-        let usersId = []
+        let postOwnersId = []
         const user = await getUserRepository({_id: userId})
 
         const followersId = user.followers
         const followingsId = user.followings
 
-        usersId.push(userId, ...followersId, ...followingsId)
+        postOwnersId.push(userId, ...followersId, ...followingsId)
 
-        usersId
-        
-        // const posts = await getPostsRepository(skip, nPerPage)
+        const posts = await getPostsRepository(postOwnersId, skip, nPerPage)
 
-        // if ( posts === null ) {throw new catchError("post not found")}
+        if ( !posts.length ) {throw new catchError("There is no post")}
 
-        // return responseHandler("post has been retrieved", posts)
+        return responseHandler("post has been retrieved", posts)
     })
 }
 
 //not completed
-export async function likePostService(postId: string, userId: string): Promise<any> {
-    return await asyncWrapper( async () => {
+export async function reactToPostService(Post: any, userId: string): Promise<any> {
 
-        const Post = await getPostRepository(postId)
+    try {
 
-        //unlike post if 
         if (Post.likes.includes(userId)) {
 
+            await post.updateOne(
+                {_id: Post._id},
+                {$pull: {likes: userId}}
+            )
+
+            return responseHandler(`you just unlike ${Post.title}`)
+        } else {
+
+            await post.updateOne(
+                {_id: Post._id},
+                {$push: {likes: userId}}
+            )
+
+            return responseHandler(`you just liked ${Post.title}`)
         }
 
-        const likePost = await updatePostRepository(
-            postId, 
-            { "$push": {likes: userId}}
-        )
-
-        return likePost
-    })
-}
-
-//posts by loggedIn user and loggedIn User's posts
-export async function unLikePostService(postId: string, userId: string): Promise<any> {
-    return await asyncWrapper( async () => {
-
-        const likePost = await updatePostRepository(
-            postId, 
-            { "$pull": {likes: userId}}
-        )
-
-        return likePost
-    })
-}
-
-export async function PostCommentService(postId: string, payload: {[key: string]: any}): Promise<any> {
-    return await asyncWrapper( async () => {
-
-        const likePost = await updatePostRepository(
-            postId, 
-            {"$push": {
-                comments: payload
-            }}
-        )
         
-        return likePost
-    })
+    } catch (error: any) {
+        return new catchError(error.message)
+    }
 }
 
 //delete a post
