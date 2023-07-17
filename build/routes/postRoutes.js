@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const postController_1 = require("../controllers/postController");
+const paginate_1 = require("../middlewares/paginate");
+const authenticate_1 = require("../middlewares/authenticate");
+const router = (0, express_1.Router)();
+router.post("/post/create_post", (0, authenticate_1.authUser)(["Blogger"]), postController_1.createPostController);
+router.get("/post/get_post/:postId", (0, authenticate_1.authUser)(["Blogger"]), (0, authenticate_1.authConnections)(), postController_1.getPostController);
+router.get("/post/get_posts", (0, authenticate_1.authUser)(["Blogger"]), (0, paginate_1.paginate)(), postController_1.getPostsController);
+router.put("/post/reaction", (0, authenticate_1.authUser)(["Blogger"]), (0, authenticate_1.authConnections)(), postController_1.reactToPostController);
+exports.default = router;
