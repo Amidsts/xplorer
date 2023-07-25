@@ -11,7 +11,7 @@ const options = {
 
 
 
-connect(env("dbUri"), options).then( (e) => {
+connect(env("MONGODB_URI"), options).then( (e) => {
     
     logger.info("connected to database successfully")
 

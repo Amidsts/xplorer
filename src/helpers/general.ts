@@ -7,7 +7,6 @@ import { catchError } from "./custom_error"
 
 dotenv.config()
 
-
 export async function asyncWrapper (callback: () => void, extra?: any) {
     try {
         const result = await callback()

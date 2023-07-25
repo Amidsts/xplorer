@@ -1,8 +1,15 @@
-FROM node:20
+FROM node:latest as development
+
 RUN mkdir -p /usr/src/app
+
 WORKDIR /usr/src/app
+
 COPY package*.json /usr/src/app
+
 RUN npm i
-COPY ./build .
-EXPOSE 2000
-CMD ["node", "app.js"]
+
+COPY . .  
+
+RUN npm run build
+
+CMD ["node", "build/app.js"]

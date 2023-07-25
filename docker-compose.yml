@@ -1,15 +1,26 @@
 version: '3'
+
 services:
-  server:
-    image: Dockerfile
+
+  node_api:
     build: .
     ports:
-      - "9080:8000"
+      - "9000:8000" 
+    environment:
+      NODE_ENV: development
+      PORT: 9080
+      MONGODB_URI: mongodb://mongo_db:27017/xplorer
+      JWT_SECRET: vgsjb92873vsbajhg2348hgcvxvcndg
     depends_on:
-      - 
-  db:
-    image: mongo
+      - mongo_db
+
+  mongo_db:
+    image: mongo:20
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
-      - ./data:/data/db
+      - database:/data/db
+    restart: always
+
+volumes:
+  database:

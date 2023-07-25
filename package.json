@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc ",
     "tsc": "tsc",
-    "dev": "ts-node-dev src/app.ts"
+    "build": "rm -rf ./build && tsc ",
+    "dev": "ts-node-dev src/app.ts",
+    "start": "npm run build && node build/app.js"
   },
   "keywords": [],
   "author": "",

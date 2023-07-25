@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express"
+import express, { NextFunction, Request, Response } from "express"
 import cors from "cors"
 import morgan from "morgan"
 import helmet from "helmet"
@@ -12,6 +12,10 @@ import postApis from "../routes/postRoutes"
 const app = express()
 
 require("./db")
+
+app.get("/test", (req: Request, res:Response) => {
+    res.send("hello from docker container")
+})
 
 app.use(express.json())
     .use(express.urlencoded({extended: true}))
