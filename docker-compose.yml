@@ -9,18 +9,18 @@ services:
     environment:
       NODE_ENV: development
       PORT: 9080
-      MONGODB_URI: mongodb://mongo_db:27017/xplorer
+      MONGODB_URI: mongodb://database:27017/xplorer
       JWT_SECRET: vgsjb92873vsbajhg2348hgcvxvcndg
     depends_on:
       - mongo_db
 
-  mongo_db:
-    image: mongo:20
+  database:
+    image: mongo:7.0.0-rc8-jammy
     ports:
-      - "27018:27017"
+      - "27017:27017"
     volumes:
-      - database:/data/db
+      - mongodb:/data/db
     restart: always
 
 volumes:
-  database:
+  mongodb:
