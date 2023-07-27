@@ -10,7 +10,7 @@ import postApis from "../routes/postRoutes"
 
 
 const app = express()
-
+console.log("welcome to docker!")
 require("./db")
 
 app.get("/test", (req: Request, res:Response) => {

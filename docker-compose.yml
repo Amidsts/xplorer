@@ -5,10 +5,9 @@ services:
   node_api:
     build: .
     ports:
-      - "9000:8000" 
+      - "9000:9080" 
     environment:
       NODE_ENV: development
-      PORT: 9080
       MONGODB_URI: mongodb://database:27017/xplorer
       JWT_SECRET: vgsjb92873vsbajhg2348hgcvxvcndg
     depends_on:
