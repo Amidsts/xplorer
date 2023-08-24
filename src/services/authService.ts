@@ -32,7 +32,7 @@ export async function createUserService (payload: {[key: string]: any}):Promise<
             password,
             email
         } = createUserValidator(payload)
-console.log(password);
+// console.log(password);
 
         const userExists = await getUserRepository({email})
 

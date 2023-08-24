@@ -13,8 +13,8 @@ const app = express()
 console.log("welcome to docker!")
 require("./db")
 
-app.get("/test", (req: Request, res:Response) => {
-    res.send("hello from docker container")
+app.get("/", (req: Request, res:Response) => {
+    res.send("hello from dockerised explorer project")
 })
 
 app.use(express.json())
